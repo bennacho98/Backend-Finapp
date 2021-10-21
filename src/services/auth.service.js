@@ -9,7 +9,7 @@ const authService = {
             expiresIn: 60 * 60 * 24
         })
     },
-    login: (data) => {
+    login: async (data) => {
         try {
             const {email, password} = data
             let userExists = await User.findOne({email: email}, 'name email password').exec()
