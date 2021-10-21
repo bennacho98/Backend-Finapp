@@ -5,8 +5,8 @@ const msg = require('../helpers/messages')
 const { token } = require('morgan')
 
 const authService = {
-    signToken: async (data) => {
-        return jwt.sign({ id }, 'My app', {
+    signToken: async (id) => {
+        return jwt.sign({ id }, process.env.JWT_SECRET, {
             expiresIn: 60 * 60 * 24
         })
     },
