@@ -4,7 +4,7 @@ const msg = require('../helpers/messages')
 const User = require('../models/user')
 const authService = require('../services/auth.service')
 
-router.post('/register', async (res, req) => {
+router.post('/register', async (req, res) => {
     try {
         const user = new User(req.body)
         const token = await authService.register(user)

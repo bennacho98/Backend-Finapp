@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const msg = require('../helpers/messages')
-const { token } = require('morgan')
 
 const authService = {
     signToken: async (id) => {
