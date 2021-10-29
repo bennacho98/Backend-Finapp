@@ -3,6 +3,7 @@ const router = express.Router()
 const msg = require('../helpers/messages')
 const User = require('../models/user')
 const authService = require('../services/auth.service')
+const { check, validationResult } = require('express-validator')
 
 
 /**
@@ -51,7 +52,7 @@ const authService = require('../services/auth.service')
  *           }
  *       }
  *   }
- * @apiError (200) Error El email es requerido
+ * @apiError (200) Error el email es requerido
  * @apiErrorExample {json} Error-Response-Example
  * {
  *   "token": {
@@ -73,9 +74,43 @@ const authService = require('../services/auth.service')
  *       "message": "user validation failed: email: Path `email` is required."
  *   }
  * }
+ * @apiError (422) (Data Error) error en la validación de los datos
+ * @apiErrorExample {json} Data-Error-Example
+ * HTTP/1.1 422 unprocesable entry
+ * {
+ *       "errors": [
+ *           {
+ *               "value": "J",
+ *               "msg": "Nombre inválido, mínimo 2 carácteres, máximo 40 carácteres",
+ *               "param": "name",
+ *               "location": "body"
+ *           },
+ *           {
+ *               "value": "ema",
+ *               "msg": "Email no válido",
+ *               "param": "email",
+ *               "location": "body"
+ *           },
+ *           {
+ *               "value": "as",
+ *               "msg": "Contraseña débil",
+ *               "param": "password",
+ *               "location": "body"
+ *           }
+ *       ]
+ *   }
  */
 
-router.post('/register', async (req, res) => {
+router.post('/register', [
+        check('name', 'Nombre inválido, mínimo 2 carácteres, máximo 40 carácteres').isLength({min: 2, max: 40}),
+        check('email', 'Email no válido').isEmail(),
+        check('password', 'Contraseña débil').isStrongPassword()
+    ],
+    async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()})
+    }
     try {
         const user = new User(req.body)
         const token = await authService.register(user)
