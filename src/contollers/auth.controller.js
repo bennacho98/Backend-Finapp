@@ -1,5 +1,5 @@
 const User = require('../models/user')
-const authService = require('../models/user')
+const authService = require('../services/auth.service')
 const msg = require('../helpers/messages')
 const { validationResult } = require('express-validator')
 
@@ -11,10 +11,10 @@ const authController = {
             if(!email || !password){
                 res.status(400).json(msg.fieldsRequired)
             }
-            const token = await authService.login(req.body)
-            res.status(token.code).json({"token":token})
+            let token = await authService.login(req.body)
+            res.status(200).json({"token":token})
         } catch (error) {
-            res.send(error)
+            res.status(505).json(error)
         }
     },
     register: async function(req, res) {
