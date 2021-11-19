@@ -2,6 +2,7 @@ const express = require('express')
 const incomeController = require('../contollers/income.controller')
 const { check } = require('express-validator')
 const router = express.Router()
+const Auth = require('../middlewares/authentication')
 
 /**
  * @api
@@ -9,8 +10,8 @@ const router = express.Router()
  * @apiGroup
  */
 
-router.post('/', incomeController.add)
-router.get('/', incomeController.list)
+router.post('/', Auth, incomeController.add)
+router.get('/', Auth, incomeController.list)
 router.get('/:id', incomeController.find)
 
 module.exports = router

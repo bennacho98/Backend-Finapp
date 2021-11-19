@@ -11,6 +11,7 @@ const Income = new Schema ({
         min: 5000,
         max: 1500000
     },
+    description: String,
     createAt: {
         type: Date,
         default: Date.now

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const user = require('../models/user')
 
 const Authorized = (req, res, next) => {
     const token = req.header('x-auth-token')
@@ -7,7 +8,7 @@ const Authorized = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = decoded
+        req.body.user = decoded.id
         next()
     } catch (error) {
         res.status(405).json({msg: 'Invalid token'})
@@ -15,3 +16,6 @@ const Authorized = (req, res, next) => {
 }
 
 module.exports = Authorized
+
+// const u = await User.findById(decoded)
+// u.rol == 1 ? 'admin' : 'no admin'
