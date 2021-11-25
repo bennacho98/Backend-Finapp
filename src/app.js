@@ -26,7 +26,7 @@ app.use(express.urlencoded({
 //Rutas
 app.use('/auth', authService)
 app.use('/incomes', incomeRoutes)
-app.use('/aoutcomes', outcomeRoutes)
+app.use('/outcomes', outcomeRoutes)
 
 //Inicio del servidor
 app.listen(app.get('port'), () => {
