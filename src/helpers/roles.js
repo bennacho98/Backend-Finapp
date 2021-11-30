@@ -1,14 +1,15 @@
 const roles = {
-    admin: {
+    Administrador: {
+        levelAccess: 1
+    },
+    Entrenador: {
         levelAccess: 2
     },
-    superAdmin: {
+    Deportista: {
         levelAccess: 3
     },
     regular: {
-        levelAccess: {
-            levelAccess: 4
-        }
+        levelAccess: 4
     }
 }
 
