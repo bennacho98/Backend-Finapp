@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const User = new Schema({
     name: String,
+    lastname : String,
     role: {
         type: Number,
         default: 4
