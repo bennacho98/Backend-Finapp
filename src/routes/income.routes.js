@@ -6,12 +6,6 @@ const Auth = require('../middlewares/authentication')
 const mail = require('../services/mail.service')
 const Rol = require('../middlewares/rol.middlewares')
 
-/**
- * @api
- * @apiName
- * @apiGroup
- */
-
 router.post('/', Auth, incomeController.add)
 router.get('/', Auth, Rol.Medium, incomeController.list)
 router.get('/:id', incomeController.find)

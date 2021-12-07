@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const authController = require('../contollers/auth.controller')
 const { check } = require('express-validator')
+const Auth = require('../middlewares/authentication')
+const Rol = require('../middlewares/rol.middlewares')
 
 
 /**
@@ -14,9 +16,11 @@ const { check } = require('express-validator')
  * @apiParam {string} password Contraseña del ususario
  * @apiParamExample {json} Request-Example:
  *          {
- *              "name": "Juan"
- *              "email": "jg@email.com"
- *              "password": "123456"
+ *              "name": "Joel",
+ *              "lastname": "Miller",
+ *              "role": 2,
+ *              "email": "email@email.on",
+ *              "password": "$2b$10$ecfvbWrDO9.
  *          }
  * @apiPermission none
  * @apiSuccess {string} token Token de acceso del usuario
@@ -25,14 +29,16 @@ const { check } = require('express-validator')
  *            {
  *                "token": {
  *                    "userData": {
- *                        "name": "Juan",
- *                        "email": "jg@email.com",
- *                        "password": "$2b$10$323qwuIJMh6w1zkU8aOzfOWQ.8Y95Qw6c27xX3Jy2psb9zwYS/Fym",
- *                        "_id": "6179becd9d68f8b618716a00",
+ *                        "name": "Joel",
+ *                        "lastname": "Miller",
+ *                        "role": 2,
+ *                        "email": "email@email.on",
+ *                        "password": "$2b$10$ecfvbWrDO9.vj38k3E6U5uD4hf6uryfVs9df9YOBHZVxHiRwAO3Ju",
+ *                        "_id": "61afb829f8b849e534380a39",
  *                        "__v": 0
  *                    },
  *                    "code": 200,
- *                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTc5YmVjZDlkNjhmOGI2MTg3MTZhMDAiLCJpYXQiOjE2MzUzNjg2NTMsImV4cCI6MTY2NjkwNDY1M30.-abuDK-8yqHXzTK7NHjyUYyA0TqD3BM5crrEnTwf8Gs"
+ *                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYWZiODI5ZjhiODQ5ZTUzNDM4MGEzOSIsImlhdCI6MTYzODkwNTg5NywiZXhwIjoxNjM5NTEwNjk3fQ.yFYJvVzXqJcLdNjQrrqkCdbDUcaoBhzC6uSGsMyoRDw"
  *                }
  *            }
  * @apiError (200) Example El email debe ser único
@@ -99,8 +105,9 @@ const { check } = require('express-validator')
  *   }
  */
 
-router.post('/register', [
+router.post('/register', Auth, Rol.Medium, [
         check('name', 'Nombre inválido, mínimo 2 carácteres, máximo 40 carácteres').isLength({min: 2, max: 40}),
+        check('lastname', 'Nombre inválido, mínimo 2 carácteres, máximo 40 carácteres').isLength({min: 2, max: 40}),
         check('email', 'Email no válido').isEmail(),
         check('password', 'Contraseña débil').isStrongPassword()
     ],
@@ -112,13 +119,44 @@ router.post('/register', [
  * @api {post} /login Ingreso de usuarios
  * @apiName Login
  * @apiGroup AUTH
- * @apiDescription ingreso de usuarios usando los campos nombre, email y password
- * @apiParam {string} name Nombre del usuario que ingresa
+ * @apiDescription ingreso de usuarios usando los campos email y password
+  * @apiPermission none
+ * @apiSuccess {string} token Token de acceso del usuario
+ * @apiSuccessExample {json} Success-Response
+ *  HTTP/1.1 200 ok
+ *            {
+ *                 "token": {
+ *                     "user": {
+ *                         "_id": "61afb829f8b849e534380a39",
+ *                         "name": "Joel",
+ *                         "lastname": "Miller",
+ *                         "role": 2,
+ *                         "email": "email@email.on",
+ *                         "password": "$2b$10$ecfvbWrDO9.vj38k3E6U5uD4hf6uryfVs9df9YOBHZVxHiRwAO3Ju"
+ *                     },
+ *                     "code": 200,
+ *                     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxYWZiODI5ZjhiODQ5ZTUzNDM4MGEzOSIsImlhdCI6MTYzODkwOTI4NSwiZXhwIjoxNjM5NTE0MDg1fQ.7yI8tasH4sc0ZGX_qGiR0VamLN9by6yGujgMD3OpQkk"
+ *                 }
+ *             }
  * @apiParam {string} email E-mail del usuario que ingresa
+ * @apiError (200) Error el email es requerido
+ * @apiErrorExample {json} Error-Response-Example
+ *        {
+ *            "errors": [
+ *                 {
+ *                     "value": "ema",
+ *                     "msg": "Email no válido",
+ *                     "param": "email",
+ *                     "location": "body"
+ *                 }
+ *             ]
+ *         }
  * @apiParam {string} password Contraseña del ususario
  * @apiSampleRequest localhost:3000/auth/login
  */
 
-router.post('/login', authController.login)
+router.post('/login', [
+  check('email', 'Email no válido').isEmail(),
+], authController.login)
 
 module.exports = router
